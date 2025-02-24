@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.taskmanager.entity.enums.UserRole;
 
 import java.util.List;
 
@@ -22,6 +23,8 @@ public class User {
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Task> tasks;
 }
