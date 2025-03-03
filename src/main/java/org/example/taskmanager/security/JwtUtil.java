@@ -39,12 +39,12 @@ public class JwtUtil {
                 .getExpiration();
     }
 
-    private boolean isTokenExpired(String token) {
+    protected boolean isTokenExpired(String token) {
         Date expiration = extractExpiration(token);
         return expiration.before(new Date());
     }
 
-    private boolean validaToken(String token, UserDetails userDetails) {
+    protected boolean validateToken(String token, UserDetails userDetails) {
         return extractUsername(token).equals(userDetails.getUsername());
     }
 
