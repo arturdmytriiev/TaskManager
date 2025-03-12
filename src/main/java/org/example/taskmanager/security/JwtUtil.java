@@ -44,7 +44,7 @@ public class JwtUtil {
         return expiration.before(new Date());
     }
 
-    protected boolean validateToken(String token, UserDetails userDetails) {
+    public boolean validateToken(String token, UserDetails userDetails) {
         return extractUsername(token).equals(userDetails.getUsername());
     }
 
