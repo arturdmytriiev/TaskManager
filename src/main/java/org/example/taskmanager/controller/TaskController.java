@@ -1,6 +1,5 @@
 package org.example.taskmanager.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.example.taskmanager.dto.TaskDTO;
 import org.example.taskmanager.entity.Task;
 import org.example.taskmanager.service.TaskService;
@@ -11,41 +10,50 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
-@RequiredArgsConstructor
 public class TaskController {
+
     private final TaskService taskService;
 
-    @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody TaskDTO task ,@RequestParam String username) {
-        return ResponseEntity.ok(taskService.save(task , username));
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
     }
+
+    @PostMapping
+    public ResponseEntity<Task> createTask(@RequestBody TaskDTO taskDTO, @RequestParam String username) {
+        Task savedTask = taskService.save(taskDTO, username);
+        return ResponseEntity.ok(savedTask);
+    }
+
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks() {
-        return ResponseEntity.ok(taskService.findAll());
+        List<Task> tasks = taskService.findAll();
+        return ResponseEntity.ok(tasks);
     }
-
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task>getTaskById(@PathVariable Long id) {
+    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
         return taskService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody TaskDTO task) {
-        return ResponseEntity.ok(taskService.update(id, task));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTaskById(@PathVariable Long id) {
-        if(taskService.delete(id)) {
-            return ResponseEntity.ok().build();
-        }else{
+    @PutMapping("/{id}")
+    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody TaskDTO taskDTO) {
+        try {
+            Task updatedTask = taskService.update(id, taskDTO);
+            return ResponseEntity.ok(updatedTask);
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        try {
+            boolean deleted = taskService.delete(id);
+            return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

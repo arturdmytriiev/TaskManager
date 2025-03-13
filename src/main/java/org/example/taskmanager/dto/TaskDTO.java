@@ -7,8 +7,8 @@ import org.example.taskmanager.entity.enums.TaskPriority;
 import org.example.taskmanager.entity.enums.TaskStatus;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class TaskDTO {
     private String title;
     private String description;
