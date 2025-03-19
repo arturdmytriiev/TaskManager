@@ -146,14 +146,15 @@ class TaskControllerTest {
         when(taskService.delete(anyLong())).thenReturn(true);
 
         mockMvc.perform(delete("/api/tasks/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                        .andExpect(content().string(""));
 
         verify(taskService, times(1)).delete(anyLong());
     }
 
     @Test
     void deleteTaskNotFoundTest() throws Exception {
-        doThrow(new RuntimeException("Task not found")).when(taskService).delete(anyLong());
+        when(taskService.delete(anyLong())).thenReturn(false);
 
         mockMvc.perform(delete("/api/tasks/99"))
                 .andExpect(status().isNotFound());

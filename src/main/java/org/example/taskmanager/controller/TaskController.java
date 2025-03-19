@@ -49,11 +49,12 @@ public class TaskController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        try {
-            boolean deleted = taskService.delete(id);
-            return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        boolean deleted = taskService.delete(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleNotFound(RuntimeException e) {
+        return ResponseEntity.status(404).body(e.getMessage());
     }
 }
